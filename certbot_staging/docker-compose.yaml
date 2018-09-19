@@ -1,0 +1,32 @@
+version: '2.0'
+
+services:
+
+    nginx:
+        container_name: 'letsencrypt-nginx-staging'
+        image: nginx:latest
+        ports:
+          - "7777:80"
+        volumes:
+          - ./nginx.conf:/etc/nginx/conf.d/default.conf
+          - ./letsencrypt-site:/usr/share/nginx/html
+        networks:
+          - docker-network
+    certbot:
+        image: certbot/certbot
+        container_name: certbot_staging
+        tty: true
+        depends_on:
+            - nginx
+        volumes:
+          - ../volumes/etc/letsencrypt:/etc/letsencrypt
+          - ../volumes/var/lib/letsencrypt:/var/lib/letsencrypt
+          - ./letsencrypt-site:/data/letsencrypt
+          - ../volumes/var/log/letsencrypt:/var/log/letsencrypt
+        networks:
+          - docker-network
+        command: --staging certificates
+
+networks:
+    docker-network:
+        driver: bridge

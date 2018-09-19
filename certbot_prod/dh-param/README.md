@@ -1,0 +1,1 @@
+Place here you diffie hellman file as dhparam-2018.pem
